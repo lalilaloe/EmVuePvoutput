@@ -1,1 +1,176 @@
 # EmVuePvoutput
+
+A script calculating average usage of the past 5 minutes for PVOutput, extended data.
+
+Set a cronjob, every 5 minutes with `node emvue-live.js`, keep in mind this script is customised for my own usage. Certain group usage are combined together to log to PVOutputs extended data, modify to fit your needs. Or use `fetch-get.py` to get raw json data.
+
+You can also use `fetch-get.py` and integrate it yourself. The data returned is json containing info for all channels including average data of past 5 minutes. 
+
+Also an `totalUsage` entry is added which is calculated by adding up the channel values. You can also get totalUsage from Emporia api with the `get_device_list_usage` but `get_chart_usage` does not support these channels `Balance` and `Totalusage` thus they are excluded from the output. see [PyEmVue](https://github.com/magico13/PyEmVue/blob/master/readme.md#typical-example---getting-recent-usage)
+
+Keep in mind that this script is doing multiple api calls for each channel to get the usage data, execution takes about 20-30 seconds. Every 5 minutes is fine and does not trigger a rate limit.
+
+Example output `fetch-get.py`
+```json
+[
+   {
+      "device_gid":999999,
+      "channel_num":"1,2,3",
+      "name":"Net",
+      "power_usage_watts":0,
+      "average_power_watts_5min":-56.18073214213054,
+      "average_usage_kwh_5min":-0.0009363455357021754,
+      "cumulative_usage_today_kwh":1.0339799866987351
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"1",
+      "name":"Slaapkamer",
+      "power_usage_watts":0,
+      "average_power_watts_5min":11.131075166066486,
+      "average_usage_kwh_5min":0.00018551791943444146,
+      "cumulative_usage_today_kwh":0.13777024717377714
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"2",
+      "name":"Wasmachine",
+      "power_usage_watts":0,
+      "average_power_watts_5min":6.6921383730570465,
+      "average_usage_kwh_5min":0.00011153563955095081,
+      "cumulative_usage_today_kwh":0.0870528267577982
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"3",
+      "name":"Droger",
+      "power_usage_watts":0,
+      "average_power_watts_5min":16.825300559997558,
+      "average_usage_kwh_5min":0.0002804216759999593,
+      "cumulative_usage_today_kwh":0.23866978930669755
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"4",
+      "name":"Vaatwasser",
+      "power_usage_watts":0,
+      "average_power_watts_5min":5.395731178919474,
+      "average_usage_kwh_5min":8.992885298199124e-05,
+      "cumulative_usage_today_kwh":0.06326243159523866
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"5",
+      "name":"Woonkamer",
+      "power_usage_watts":0,
+      "average_power_watts_5min":154.49354685465497,
+      "average_usage_kwh_5min":0.0025748924475775823,
+      "cumulative_usage_today_kwh":1.1212438932667361
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"6",
+      "name":"Vloerverwarming",
+      "power_usage_watts":0,
+      "average_power_watts_5min":11.214746751785276,
+      "average_usage_kwh_5min":0.00018691244586308795,
+      "cumulative_usage_today_kwh":0.4293443499051939
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"7",
+      "name":"Kookplaat/Oven",
+      "power_usage_watts":0,
+      "average_power_watts_5min":0.48390985488891597,
+      "average_usage_kwh_5min":8.0651642481486e-06,
+      "cumulative_usage_today_kwh":0.006808401838668679
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"8",
+      "name":"Zonnepanelen",
+      "power_usage_watts":0,
+      "average_power_watts_5min":-258.2389331054688,
+      "average_usage_kwh_5min":-0.0043039822184244795,
+      "cumulative_usage_today_kwh":-0.9958817128470573
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"9",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"10",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"11",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"12",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"13",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"14",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"15",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "device_gid":999999,
+      "channel_num":"16",
+      "name":null,
+      "power_usage_watts":0,
+      "average_power_watts_5min":0,
+      "average_usage_kwh_5min":0,
+      "cumulative_usage_today_kwh":0
+   },
+   {
+      "name":"totalUsage",
+      "channel_num":"totalUsage",
+      "average_power_watts_5min":206.23644873936973,
+      "cumulative_usage_today_kwh":2.0841519398441104
+   }
+]
+```

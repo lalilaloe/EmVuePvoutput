@@ -4,6 +4,7 @@ import json
 import datetime
 from pyemvue import PyEmVue
 from pyemvue.enums import Scale, Unit
+import math
 
 vue = PyEmVue()
 vue.login(token_storage_file='keys.json')
@@ -29,19 +30,22 @@ for device in devices:
     # Retrieve cumulative usage for the day and usage in the last 5 minutes
     for channel in device.channels:
         name = channel.name
-        if name != 'TotalUsage' and name != 'Balance':
+        if channel.channel_num == "1,2,3": name = "Net"
+        if name != 'Balance':
             # Get cumulative usage
             cumulative_usage_today = 0
-            cumulative_usage = vue.get_chart_usage(
-                channel=channel,
-                start=day_start,
-                end=end_time,
-                scale=Scale.DAY.value,
-                unit=Unit.KWH.value
-            )[0]
+            if name != "totalUsage" :
+                cumulative_usage = vue.get_chart_usage(
+                    channel=channel,
+                    start=day_start,
+                    end=end_time,
+                    scale=Scale.DAY.value,
+                    unit=Unit.KWH.value
+                )[0]
 
-            cumulative_usage_today = sum(value for value in cumulative_usage if value is not None)
+                cumulative_usage_today = sum(value for value in cumulative_usage if value is not None)
 
+            #print(channel.channel_num,name, cumulative_usage_today)
             # Get average power and usage over the past 5 minutes
             usage = 0
             total_power = 0
@@ -72,6 +76,15 @@ for device in devices:
                 'average_usage_kwh_5min': average_usage_5min,
                 'cumulative_usage_today_kwh': cumulative_usage_today
             }
+
+
+excluded_names = {"Zonnepanelen", "Net"}
+usage_data_per_channel["totalUsage"] ={
+    "name": "totalUsage",
+    "channel_num": "totalUsage",
+    "average_power_watts_5min": math.fsum(obj['average_power_watts_5min'] for i,obj in usage_data_per_channel.items() if obj['name'] not in excluded_names),
+    "cumulative_usage_today_kwh":  math.fsum(obj['cumulative_usage_today_kwh'] for i,obj in usage_data_per_channel.items() if obj['name'] not in excluded_names)
+}
 
 # Prepare output in JSON format
 output = []

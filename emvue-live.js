@@ -10,11 +10,13 @@ const API_URL = 'https://pvoutput.org/service/r2/addstatus.jsp';
 async function uploadToPVOutput(data) {
     const now = new Date().toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam' });
     const [datePart, timePart] = now.split(' ');
-    const date = datePart.split('-').reverse().join(''); // yyyymmdd format
-    const time = timePart.slice(0, 5); // hh:mm format
+    const [day,month,year] = datePart.split('-');
+    const date = (year + month.padStart(2, '0') + day.padStart(2,'0')).replace(',',""); // yyyymmdd format
+    
+const time = timePart.slice(0, 5); // hh:mm format
 
     //console.log(data)
-    const currentUsage = data.find(d => d.channel_num === "1,2,3");
+    const currentUsage = data.find(d => d.channel_num === "totalUsage");
     const solarGeneration = data.find(d => Number(d.channel_num) === 8);
 
     const channelsFirstSet = [1,2,3]; // Combine channels to provide extended data, modify to your specific groups
@@ -42,7 +44,7 @@ async function uploadToPVOutput(data) {
     });
 
     try {
-        // console.log(params)
+        console.log(params)
         const response = await fetch(`${API_URL}?${params}`, {
             method: 'POST',
             headers: {
@@ -64,7 +66,7 @@ async function uploadToPVOutput(data) {
 
 // Function to fetch data from the Python script
 function fetchData() {
-    exec('python3 fetch-get.py', (error, stdout, stderr) => {
+    exec('. /usr/env/bin/activate && python3 EmVuePvoutput/fetch-get.py', (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing Python script: ${error.message}`);
             return;
